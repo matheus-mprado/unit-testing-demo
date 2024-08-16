@@ -11,13 +11,13 @@ import { ProductsComponent } from './products.component';
 describe('ProductsComponent', () => {
   let component: ProductsComponent;
   let fixture: ComponentFixture<ProductsComponent>;
-
   let dialog = jasmine.createSpyObj('MatDialog', ['open']);
   let matSnackBar = jasmine.createSpyObj('MatSnackbar', ['open']);
   let mockProductService = jasmine.createSpyObj('ProductsService', [
     'getProducts',
     'deleteProduct',
   ]);
+  let product: Product;
 
   mockProductService.getProducts.and.returnValue(of([]));
 
@@ -38,6 +38,13 @@ describe('ProductsComponent', () => {
     matSnackBar = TestBed.inject(MatSnackBar);
     mockProductService = TestBed.inject(ProductsService);
     fixture.detectChanges();
+    product = {
+      id: '1',
+      title: 'Product Title',
+      price: '20',
+      description: 'Product Description',
+      category: 'Smartwatches',
+    };
   });
 
   it('should create', () => {
@@ -45,18 +52,72 @@ describe('ProductsComponent', () => {
   });
 
   describe('should test get products initially', () => {
-    it('should get product data initially', () => {});
+    it('should get product data initially', () => {
+      const products: Product[] = [{ ...product }];
 
-    it('should get product data initially on failure', () => {});
+      mockProductService.getProducts.and.returnValue(of(products));
+      component.getProducts();
+      expect(mockProductService.getProducts).toHaveBeenCalled();
+      expect(component.productData).toEqual(products);
+    });
+
+    it('should get product data initially on failure', () => {
+      mockProductService.getProducts.and.returnValue(
+        throwError(() => new Error('OPS!'))
+      );
+      component.getProducts();
+
+      expect(mockProductService.getProducts).toHaveBeenCalled();
+      expect(matSnackBar.open).toHaveBeenCalledWith(
+        'Something went wrong!...',
+        '',
+        {
+          duration: 3000,
+        }
+      );
+    });
   });
 
-  it('should test openDialog', () => {});
+  it('should test openDialog', () => {
+    component.openDialog();
+    expect(dialog.open).toHaveBeenCalled();
+  });
 
-  it('should test editDialog', () => {});
+  it('should test editDialog', () => {
+    component.editProduct(product);
+    expect(dialog.open).toHaveBeenCalledWith(AddProductComponent, {
+      data: product,
+      width: '40%',
+    });
+  });
 
   describe('should test deleteProduct', () => {
-    it('should test deleteProduct on success', () => {});
+    it('should test deleteProduct on success', () => {
+      mockProductService.deleteProduct.and.returnValue(of(product));
+      component.deleteProduct(product);
 
-    it('should test deleteProduct on failure', () => {});
+      expect(matSnackBar.open).toHaveBeenCalledWith(
+        'Deleted Successfully!...',
+        '',
+        {
+          duration: 3000,
+        }
+      );
+    });
+
+    it('should test deleteProduct on failure', () => {
+      mockProductService.deleteProduct.and.returnValue(
+        throwError(() => new Error('OPS!'))
+      );
+      component.deleteProduct(product);
+
+      expect(matSnackBar.open).toHaveBeenCalledWith(
+        'Something went wrong!...',
+        '',
+        {
+          duration: 3000,
+        }
+      );
+    });
   });
 });
