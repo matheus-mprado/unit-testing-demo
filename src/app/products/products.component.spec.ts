@@ -45,18 +45,79 @@ describe('ProductsComponent', () => {
   });
 
   describe('should test get products initially', () => {
-    it('should get product data initially', () => {});
+    it('should get product data initially', () => {
+      mockProductService.getProducts.and.returnValue(of([]));
+      component.getProducts();
 
-    it('should get product data initially on failure', () => {});
+      expect(component.productData.length).toEqual(0);
+      expect(component.showSpinner).toBeFalsy();
+    });
+
+    it('should get product data initially on failure', () => {
+      mockProductService.getProducts.and.returnValue(
+        throwError(() => new Error('error'))
+      );
+      component.getProducts();
+
+      expect(matSnackBar.open).toHaveBeenCalledWith(
+        'Something went wrong!...',
+        '',
+        {
+          duration: 3000,
+        }
+      );
+      expect(component.showSpinner).toBeFalsy();
+    });
   });
 
-  it('should test openDialog', () => {});
+  it('should test openDialog', () => {
+    component.openDialog();
+    expect(dialog.open).toHaveBeenCalledWith(AddProductComponent, {
+      width: '40%',
+    });
+  });
 
-  it('should test editDialog', () => {});
+  it('should test editDialog', () => {
+    const product = {} as Product;
+    component.editProduct(product);
+    expect(dialog.open).toHaveBeenCalledWith(AddProductComponent, {
+      width: '40%',
+      data: product,
+    });
+  });
 
   describe('should test deleteProduct', () => {
-    it('should test deleteProduct on success', () => {});
+    it('should test deleteProduct on success', () => {
+      const product = {} as Product;
+      product.id = '1';
 
-    it('should test deleteProduct on failure', () => {});
+      mockProductService.deleteProduct.and.returnValue(of(product));
+      component.deleteProduct(product);
+
+      expect(matSnackBar.open).toHaveBeenCalledWith(
+        'Deleted Successfully!...',
+        '',
+        {
+          duration: 3000,
+        }
+      );
+    });
+
+    it('should test deleteProduct on failure', () => {
+      mockProductService.deleteProduct.and.returnValue(
+        throwError(() => new Error('error'))
+      );
+      const product = {} as Product;
+      product.id = '1';
+      component.deleteProduct(product);
+
+      expect(matSnackBar.open).toHaveBeenCalledWith(
+        'Something went wrong!...',
+        '',
+        {
+          duration: 3000,
+        }
+      );
+    });
   });
 });

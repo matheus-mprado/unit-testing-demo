@@ -26,6 +26,7 @@ describe('AppComponent', () => {
       declarations: [AppComponent, MockNavBarComponent, MockProductsComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
+
     component = fixture.componentInstance;
   });
 
@@ -33,9 +34,21 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have app-navbar', () => {});
+  it('should have app-navbar', () => {
+    const childDebugElement = fixture.debugElement.query(
+      By.directive(MockNavBarComponent)
+    );
+    expect(childDebugElement).toBeTruthy();
+  });
 
-  it('should have app-products', () => {});
+  it('should have app-products', () => {
+    const childDebugElement = fixture.debugElement.query(
+      By.directive(MockProductsComponent)
+    );
+    expect(childDebugElement).toBeTruthy();
+  });
 
-  it('should test sum of two numbers', () => {});
+  it('should test sum of two numbers', () => {
+    expect(component.add(1, 2)).toEqual(3);
+  });
 });
