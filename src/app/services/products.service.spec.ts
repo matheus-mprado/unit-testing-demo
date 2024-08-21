@@ -8,7 +8,7 @@ import {
 import { Product } from '../models/product.model';
 import { environment } from 'src/environments/environment';
 
-fdescribe('ProductsService', () => {
+describe('ProductsService', () => {
   let product: Product;
   let response: Product;
   let service: ProductsService;
@@ -33,7 +33,7 @@ fdescribe('ProductsService', () => {
     expect(service).toBeTruthy();
   });
 
-  fit('should test getProducts', () => {
+  it('should test getProducts', () => {
     service.getProducts().subscribe((res) => {
       expect(res.length).toEqual(0);
     });
@@ -41,7 +41,7 @@ fdescribe('ProductsService', () => {
     expect(req.request.method).toEqual('GET');
   });
 
-  fit('should test saveProducts', () => {
+  it('should test saveProducts', () => {
     service.saveProduct(product).subscribe((res) => {
       expect(res).toEqual(response);
     });
@@ -49,21 +49,25 @@ fdescribe('ProductsService', () => {
     expect(req.request.method).toEqual('POST');
   });
 
- fit('should test updateProduct', () => {
-    product.id = '1'
+  it('should test updateProduct', () => {
+    product.id = '1';
     service.updateProduct(product).subscribe((res) => {
       expect(res).toEqual(response);
     });
-    const req = httpController.expectOne(`${environment.baseAPI}products/${product.id}`);
+    const req = httpController.expectOne(
+      `${environment.baseAPI}products/${product.id}`
+    );
     expect(req.request.method).toEqual('PUT');
   });
 
-  fit('should test deleteProduct', () => {
-     product.id = '1';
-     service.deleteProduct(Number(product.id)).subscribe((res) => {
+  it('should test deleteProduct', () => {
+    product.id = '1';
+    service.deleteProduct(Number(product.id)).subscribe((res) => {
       expect(res).toEqual(response);
     });
-    const req = httpController.expectOne(`${environment.baseAPI}products/${product.id}`);
+    const req = httpController.expectOne(
+      `${environment.baseAPI}products/${product.id}`
+    );
     expect(req.request.method).toEqual('DELETE');
   });
 });
