@@ -39,3 +39,8 @@ describe('AppComponent', () => {
 
   it('should test sum of two numbers', () => {});
 });
+it('should add two numbers', () => {
+  const appComponent = new AppComponent();
+  const result = appComponent.add(2, 3);
+  expect(result).toBe(5);
+});
